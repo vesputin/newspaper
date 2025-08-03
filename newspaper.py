@@ -6,6 +6,7 @@ from jinja2 import Template
 from dotenv import load_dotenv
 import os
 import urllib.request
+from datetime import datetime
 
 # Load .env variables
 load_dotenv()
@@ -20,7 +21,7 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", "465"))
 FEEDS = {
     "BBC": "http://feeds.bbci.co.uk/news/rss.xml",
     "CHEK News": "https://www.cheknews.ca/feed/",
-    "AP News": "https://news.yahoo.com/rss/ap",  # ✅ Yahoo proxy
+    "AP News": "https://news.yahoo.com/rss/ap",
     "Ars Technica": "http://feeds.arstechnica.com/arstechnica/index",
     "Al Jazeera": "https://www.aljazeera.com/xml/rss/all.xml",
 }
@@ -28,7 +29,7 @@ FEEDS = {
 def fetch_headlines():
     headlines = {}
     opener = urllib.request.build_opener()
-    opener.addheaders = [("User-Agent", "Mozilla/5.0")]  # Spoof as a real browser
+    opener.addheaders = [("User-Agent", "Mozilla/5.0")]
     urllib.request.install_opener(opener)
 
     for source, url in FEEDS.items():
@@ -45,26 +46,29 @@ def fetch_headlines():
             print(f"❌ Failed to fetch {source}: {e}")
     return headlines
 
-HTML_TEMPLATE = """
+today = datetime.now().strftime("%A, %B %d, %Y")
+
+HTML_TEMPLATE = f"""
 <html>
   <body style="font-family: Arial, sans-serif;">
-    <h2>Today''s News</h2>
-    {% for source, entries in headlines.items() %}
-      <h3>{{ source }}</h3>
+    <h2>Today's News</h2>
+    <p style="color: gray;">{today}</p>
+    {{% for source, entries in headlines.items() %}}
+      <h3>{{{{ source }}}}</h3>
       <ul>
-        {% for item in entries %}
-          <li><a href="{{ item.link }}">{{ item.title }}</a></li>
-        {% endfor %}
+        {{% for item in entries %}}
+          <li><a href="{{{{ item.link }}}}">{{{{ item.title }}}}</a></li>
+        {{% endfor %}}
       </ul>
-    {% endfor %}
-    <p style="font-size: small; color: gray;">Sent by {{ email_from }}</p>
+    {{% endfor %}}
+    <p style="font-size: small; color: gray;">Sent by {{{{ email_from }}}}</p>
   </body>
 </html>
 """
 
 def send_email(html):
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "Your Daily News"
+    msg['Subject'] = "Your Daily News Digest"
     msg['From'] = EMAIL_FROM
     msg['To'] = EMAIL_TO
 
@@ -77,9 +81,8 @@ def send_email(html):
 
 def main():
     headlines = fetch_headlines()
-    html = Template(HTML_TEMPLATE).render(headlines=headlines, email_from=EMAIL_FROM)
+    html = Template(HTML_TEMPLATE).render(headlines=headlines, email_from=EMAIL_FROM, today=today)
     send_email(html)
 
 if __name__ == "__main__":
     main()
-
