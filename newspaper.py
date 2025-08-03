@@ -68,7 +68,7 @@ HTML_TEMPLATE = f"""
 
 def send_email(html):
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "Your Daily News Digest"
+    msg['Subject'] = "Today's News"
     msg['From'] = EMAIL_FROM
     msg['To'] = EMAIL_TO
 
