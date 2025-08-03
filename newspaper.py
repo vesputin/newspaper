@@ -53,15 +53,15 @@ HTML_TEMPLATE = f"""
   <body style="font-family: Arial, sans-serif;">
     <h2>Today's News</h2>
     <p style="color: gray;">{today}</p>
-    {% for source, entries in headlines.items() %}
-      <h3>{{ source }}</h3>
+    {{% for source, entries in headlines.items() %}}
+      <h3>{{{{ source }}}}</h3>
       <ul>
-        {% for item in entries %}
-          <li><a href="{{ item.link }}">{{ item.title }}</a></li>
-        {% endfor %}
+        {{% for item in entries %}}
+          <li><a href="{{{{ item.link }}}}">{{{{ item.title }}}}</a></li>
+        {{% endfor %}}
       </ul>
-    {% endfor %}
-    <p style="font-size: small; color: gray;">Sent by {{ email_from }}</p>
+    {{% endfor %}}
+    <p style="font-size: small; color: gray;">Sent by {{{{ email_from }}}}</p>
   </body>
 </html>
 """
