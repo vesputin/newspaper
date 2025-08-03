@@ -1,0 +1,31 @@
+name: Daily Newspaper Email
+
+on:
+  schedule:
+    - cron: '30 14 * * *'  # 7:30 AM Pacific = 14:30 UTC
+  workflow_dispatch:
+
+jobs:
+  send-newspaper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          echo "EMAIL_FROM=${{ secrets.EMAIL_FROM }}" >> .env
+          echo "EMAIL_TO=${{ secrets.EMAIL_TO }}" >> .env
+          echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" >> .env
+          echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> .env
+          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
+
+      - name: Run newspaper script
+        run: python newspaper.py
