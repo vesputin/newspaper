@@ -48,7 +48,7 @@ def fetch_headlines():
 HTML_TEMPLATE = """
 <html>
   <body style="font-family: Arial, sans-serif;">
-    <h2>📰 Your Personalized News Digest</h2>
+    <h2>Today''s News</h2>
     {% for source, entries in headlines.items() %}
       <h3>{{ source }}</h3>
       <ul>
