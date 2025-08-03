@@ -41,9 +41,9 @@ def fetch_headlines():
                     for entry in feed.entries[:5]
                 ]
             else:
-                print(f"⚠️ No entries found for {source}")
+                print(f"No entries found for {source}")
         except Exception as e:
-            print(f"❌ Failed to fetch {source}: {e}")
+            print(f"Failed to fetch {source}: {e}")
     return headlines
 
 today = datetime.now().strftime("%A, %B %d, %Y")
